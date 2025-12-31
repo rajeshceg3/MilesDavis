@@ -82,6 +82,12 @@ const ScrollProgress = () => {
 };
 
 const App = () => {
+  const contentRef = useRef(null);
+
+  const scrollToContent = () => {
+    contentRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <div className="bg-miles-dark min-h-screen text-miles-paper selection:bg-miles-brass selection:text-black">
       <div className="noise-overlay"></div>
@@ -104,18 +110,20 @@ const App = () => {
           </p>
         </motion.div>
 
-        <motion.div
+        <motion.button
+          onClick={scrollToContent}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 1 }}
-          className="absolute bottom-12 text-xs text-miles-smoke/30 uppercase tracking-widest animate-pulse"
+          className="absolute bottom-12 text-xs text-miles-smoke/30 uppercase tracking-widest animate-pulse hover:text-miles-brass focus:text-miles-brass focus:outline-none cursor-pointer transition-colors"
+          aria-label="Scroll to first chapter"
         >
           Scroll to Listen
-        </motion.div>
+        </motion.button>
       </section>
 
       {/* Chapters */}
-      <div className="pb-32">
+      <div className="pb-32" ref={contentRef}>
         {chapters.map((chapter, index) => (
           <Chapter key={chapter.id} data={chapter} index={index} />
         ))}
