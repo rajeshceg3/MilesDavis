@@ -1,0 +1,3 @@
+## 2024-05-23 - Back to Top Accessibility
+**Learning:** Long scrolling narratives with fixed navigational elements at the start require a mechanism to return to the top or navigate efficiently. A "Back to Top" button is a simple, unobtrusive solution that improves accessibility for keyboard and mouse users alike, especially when "Skip to Content" is implicitly handled by the layout but "return to start" is not.
+**Action:** When designing long-form scrolling experiences, always include a way to reset the scroll position, ensuring it is keyboard accessible and respects reduced motion preferences where possible (though implemented with smooth scroll here, browser settings usually override).

@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { chapters } from './data/content';
+import BackToTop from './components/BackToTop';
 
 const Chapter = ({ data, index }) => {
   const ref = useRef(null);
@@ -93,6 +94,7 @@ const App = () => {
       <div className="noise-overlay"></div>
 
       <ScrollProgress />
+      <BackToTop />
 
       {/* Intro / Hero */}
       <section className="h-screen flex flex-col items-center justify-center relative z-10">
