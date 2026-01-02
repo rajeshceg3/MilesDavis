@@ -43,8 +43,10 @@ const Chapter = ({ data, index }) => {
         </motion.div>
 
         {/* Visual Side */}
-        <div className={`relative aspect-[4/5] md:aspect-square overflow-hidden order-1 md:order-2 ${index % 2 === 1 ? 'md:order-1' : ''}`}>
+        <figure className={`relative aspect-[4/5] md:aspect-square overflow-hidden order-1 md:order-2 ${index % 2 === 1 ? 'md:order-1' : ''}`}>
           <motion.div
+            role="img"
+            aria-label={`Abstract visualization for ${data.title}`}
             style={{ scale: imageScale, opacity }}
             className={`w-full h-full ${data.imageColor} relative`}
           >
@@ -57,10 +59,10 @@ const Chapter = ({ data, index }) => {
           </motion.div>
 
           {/* Label */}
-          <div className="absolute bottom-4 right-4 text-xs text-miles-smoke/50 font-sans tracking-widest uppercase">
+          <figcaption className="absolute bottom-4 right-4 text-xs text-miles-smoke font-sans tracking-widest uppercase">
             Figure {index + 1}
-          </div>
-        </div>
+          </figcaption>
+        </figure>
       </div>
     </section>
   );
@@ -133,10 +135,25 @@ const App = () => {
 
       {/* Footer */}
       <footer className="h-[50vh] flex items-center justify-center bg-black relative z-10">
-        <div className="text-center opacity-40">
-          <p className="font-serif italic text-2xl text-miles-smoke mb-4">"Don't play what's there, play what's not there."</p>
-          <div className="w-8 h-[1px] bg-miles-brass mx-auto"></div>
-        </div>
+        <motion.figure
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+          className="text-center max-w-2xl px-6 group"
+        >
+          <blockquote
+            className="font-serif italic text-2xl md:text-3xl text-miles-smoke mb-6 transition-colors duration-500 group-hover:text-miles-paper"
+            cite="https://en.wikipedia.org/wiki/Miles_Davis"
+          >
+            "Don't play what's there, play what's not there."
+          </blockquote>
+          <motion.div
+            className="w-8 h-[1px] bg-miles-brass mx-auto transition-all duration-500 group-hover:w-24 group-hover:bg-miles-brass"
+          />
+          <figcaption className="mt-4 text-xs font-sans uppercase tracking-[0.2em] text-miles-brass opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+            Miles Davis
+          </figcaption>
+        </motion.figure>
       </footer>
     </div>
   );
