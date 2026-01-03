@@ -1,0 +1,122 @@
+name: Production Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+# Permissions needed for Pages deployment
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Concurrency to prevent race conditions
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  # 1. Validation Stage: Fail fast if code is bad
+  validate:
+    name: Code Quality & Security
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Linting
+        run: pnpm lint
+
+      - name: Unit Tests
+        run: pnpm test
+
+      - name: Security Audit (Deps)
+        run: pnpm audit --prod
+        continue-on-error: true # Warning for now, block in strict enterprise settings
+
+  # 2. Build Stage: Create the artifact
+  build:
+    needs: validate
+    name: Build Application
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Upload Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  # 3. Docker Verification (Parallel Track): Ensure container builds successfully
+  docker-check:
+    needs: validate
+    name: Container Build Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker Image
+        run: docker build . -t miles-davis-experience:latest
+
+      # In a real scenario, we would scan the image here
+      # - name: Scan Image with Trivy
+      #   uses: aquasecurity/trivy-action@master
+      #   with:
+      #     image-ref: 'miles-davis-experience:latest'
+
+  # 4. Deployment Stage: Deploy to GitHub Pages
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    name: Deploy to Production
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
