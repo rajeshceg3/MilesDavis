@@ -11,6 +11,9 @@ const compat = new FlatCompat({
 });
 
 module.exports = [
+  {
+    ignores: ['dist/**', 'node_modules/**', '.Jules/**'],
+  },
   ...compat.extends('plugin:react/recommended', 'plugin:jsx-a11y/recommended', 'prettier'),
   {
     files: ['**/*.{js,jsx}'],
