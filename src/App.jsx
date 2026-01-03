@@ -150,7 +150,7 @@ const App = () => {
             className="font-serif italic text-2xl md:text-3xl text-miles-smoke mb-6 transition-colors duration-500 group-hover:text-miles-paper"
             cite="https://en.wikipedia.org/wiki/Miles_Davis"
           >
-            "Don't play what's there, play what's not there."
+            &quot;Don&apos;t play what&apos;s there, play what&apos;s not there.&quot;
           </blockquote>
           <motion.div
             className="w-8 h-[1px] bg-miles-brass mx-auto transition-all duration-500 group-hover:w-24 group-hover:bg-miles-brass"
