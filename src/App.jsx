@@ -88,7 +88,12 @@ const App = () => {
   const contentRef = useRef(null);
 
   const scrollToContent = () => {
-    contentRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const content = contentRef.current;
+    if (content) {
+      content.scrollIntoView({ behavior: 'smooth' });
+      // Move focus to content so keyboard users are in the right context
+      content.focus({ preventScroll: true });
+    }
   };
 
   return (
@@ -119,7 +124,7 @@ const App = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 1 }}
-          className="absolute bottom-12 text-xs text-miles-smoke uppercase tracking-widest animate-pulse hover:text-miles-brass focus:text-miles-brass focus:outline-none focus-visible:ring-2 focus-visible:ring-miles-brass focus-visible:ring-offset-2 focus-visible:ring-offset-miles-dark rounded-sm cursor-pointer transition-colors"
+          className="absolute bottom-12 text-xs text-miles-smoke uppercase tracking-widest animate-pulse motion-reduce:animate-none hover:animate-none focus:animate-none hover:text-miles-brass focus:text-miles-brass focus:outline-none focus-visible:ring-2 focus-visible:ring-miles-brass focus-visible:ring-offset-2 focus-visible:ring-offset-miles-dark rounded-sm cursor-pointer transition-colors"
           aria-label="Scroll to first chapter"
         >
           Scroll to Listen
@@ -127,7 +132,7 @@ const App = () => {
       </section>
 
       {/* Chapters */}
-      <div className="pb-32" ref={contentRef}>
+      <div className="pb-32 outline-none" ref={contentRef} tabIndex={-1} aria-label="Chapters">
         {chapters.map((chapter, index) => (
           <Chapter key={chapter.id} data={chapter} index={index} />
         ))}
